@@ -8,7 +8,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Your Firebase configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDaqXyQHl1xmzBARI9Dp0ETt1QpiAMkd44",
             authDomain: "roqaya-birthday.firebaseapp.com",
@@ -21,21 +21,36 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        function countdown() {
-            const endTime = new Date().getTime() + 60000; // 1-minute timer
-            const timerElement = document.getElementById("timer");
+        function checkBirthday() {
+            const now = new Date();
+            const birthday = new Date("March 11, 2025 00:00:00"); // March 11, 2025 at 12:00 AM (midnight)
 
+            if (now >= birthday) {
+                document.getElementById("content").classList.remove("hidden");
+                document.getElementById("timer").innerHTML = "🎉 It's Your Birthday!";
+                loadMessages();
+            } else {
+                updateCountdown(birthday);
+            }
+        }
+
+        function updateCountdown(targetDate) {
+            const timerElement = document.getElementById("timer");
             const interval = setInterval(() => {
-                const now = new Date().getTime();
-                const remaining = endTime - now;
+                const now = new Date();
+                const remaining = targetDate - now;
 
                 if (remaining <= 0) {
                     clearInterval(interval);
-                    timerElement.innerHTML = "🎉 Time's up!";
+                    timerElement.innerHTML = "🎉 It's Your Birthday!";
                     document.getElementById("content").classList.remove("hidden");
                     loadMessages();
                 } else {
-                    timerElement.innerHTML = Math.floor(remaining / 1000) + "s";
+                    const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                    timerElement.innerHTML = `Countdown: ${days}d ${hours}h ${minutes}m ${seconds}s`;
                 }
             }, 1000);
         }
@@ -55,7 +70,7 @@
             });
         }
 
-        document.addEventListener("DOMContentLoaded", countdown);
+        document.addEventListener("DOMContentLoaded", checkBirthday);
     </script>
     <style>
         body {
@@ -89,8 +104,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎉 Happy 14th Birthday, Roqaya! 🎂</h1>
-        <div class="countdown">Countdown: <span id="timer"></span></div>
+        <h1>🎉 Happy Birthday, Roqaya! 🎂</h1>
+        <div class="countdown"><span id="timer"></span></div>
 
         <div id="content" class="hidden">
             <div class="message-box">
